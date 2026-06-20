@@ -1,0 +1,28 @@
+/**
+ * Class representing custom operational errors in API routes.
+ * @extends Error
+ */
+class ApiError extends Error {
+  /**
+   * @param {number} statusCode
+   * @param {string} [message="Something went wrong"]
+   * @param {Array<any>} [errors=[]]
+   * @param {string} [stack=""]
+   */
+  constructor(statusCode, message = "Something went wrong", errors = [], stack = "") {
+    super(message);
+    this.statusCode = statusCode;
+    this.data = null;
+    this.message = message;
+    this.success = false;
+    this.errors = errors;
+
+    if (stack) {
+      this.stack = stack;
+    } else {
+      Error.captureStackTrace(this, this.constructor);
+    }
+  }
+}
+
+module.exports = ApiError;

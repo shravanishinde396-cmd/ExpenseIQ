@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 238 83% 66%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 262 83% 58%;
+    --secondary-foreground: 210 40% 98%;
+
+    --accent: 330 81% 60%;
+    --accent-foreground: 210 40% 98%;
+
+    --success: 142 72% 40%;
+    --success-foreground: 210 40% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 47% 11%;
+
+    --danger: 0 84% 60%;
+    --danger-foreground: 210 40% 98%;
+
+    --muted: 210 40% 92%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 89%;
+    --ring: 238 83% 66%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 7%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 7%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 238 83% 66%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 262 83% 58%;
+    --secondary-foreground: 210 40% 98%;
+
+    --accent: 330 81% 60%;
+    --accent-foreground: 210 40% 98%;
+
+    --success: 142 72% 40%;
+    --success-foreground: 210 40% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 222.2 84% 4.9%;
+
+    --danger: 0 84% 60%;
+    --danger-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 238 83% 66%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* Glassmorphism custom styling utilities */
+.glass-panel {
+  @apply bg-white/60 dark:bg-slate-900/60 backdrop-blur-md border border-white/20 dark:border-slate-800/20 shadow-lg;
+}
+
+.glass-card {
+  @apply bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm border border-white/10 dark:border-slate-800/10 shadow-sm rounded-xl transition-all duration-300;
+}

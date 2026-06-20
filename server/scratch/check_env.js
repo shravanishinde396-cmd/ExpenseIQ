@@ -1,0 +1,6 @@
+require('dotenv').config();
+console.log('PORT:', process.env.PORT);
+console.log('SMTP_HOST:', process.env.SMTP_HOST);
+console.log('SMTP_PORT:', process.env.SMTP_PORT);
+console.log('SMTP_USER:', process.env.SMTP_USER);
+console.log('SMTP_PASS:', process.env.SMTP_PASS ? 'FOUND (length ' + process.env.SMTP_PASS.length + ')' : 'MISSING');
