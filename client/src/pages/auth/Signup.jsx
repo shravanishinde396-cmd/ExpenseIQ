@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useAuthStore } from '../../store/authStore';
 import { authService } from '../../services/authService';
 import { signupSchema, zodResolver } from '../../utils/validators';
 import { Button, Input, toast } from '../../components/ui';
@@ -9,6 +10,8 @@ import { User, Mail, Lock, ShieldCheck } from 'lucide-react';
 
 export default function Signup() {
   const navigate = useNavigate();
+  const setUser = useAuthStore((state) => state.setUser);
+  const setToken = useAuthStore((state) => state.setToken);
   const [isLoading, setIsLoading] = useState(false);
   const [pwdStrength, setPwdStrength] = useState({ score: 0, label: 'None', color: 'bg-slate-200' });
 
@@ -59,16 +62,19 @@ export default function Signup() {
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      await authService.signup({
+      const response = await authService.signup({
         name: data.name,
         email: data.email,
         password: data.password,
         confirmPassword: data.confirmPassword
       });
 
-      toast.success('Registration successful. OTP sent to your email!');
-      // Navigate to OTP page, passing email in state
-      navigate('/verify-otp', { state: { email: data.email } });
+      const { user, accessToken } = response.data;
+      setToken(accessToken);
+      setUser(user);
+
+      toast.success('Registration successful. Welcome to ExpenseIQ!');
+      navigate('/dashboard');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Registration failed.');
     } finally {

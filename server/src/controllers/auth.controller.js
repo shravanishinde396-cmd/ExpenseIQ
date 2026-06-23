@@ -29,30 +29,30 @@ const signup = asyncHandler(async (req, res) => {
     throw new ApiError(409, 'Email already registered');
   }
 
-  // Generate 6-digit OTP
-  const rawOtp = generateOTP();
-  const hashedOtp = await hashOTP(rawOtp);
-  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-  // Create user
+  // Create user directly as email verified to bypass OTP
   const user = await UserModel.create({
     name,
     email,
     password, // Hashes automatically in pre-save hook
-    otp: hashedOtp,
-    otpExpiry,
-    isEmailVerified: false
+    isEmailVerified: true
   });
 
-  // Send verification email
-  await sendVerificationEmail(user.email, user.name, rawOtp);
+  // Generate tokens for immediate login
+  const accessToken = generateAccessToken(user._id, user.role);
+  const refreshToken = generateRefreshToken(user._id);
 
-  // Exclude sensitive fields
-  const createdUser = await UserModel.findById(user._id).select('-password -refreshToken -otp -otpExpiry');
+  user.refreshToken = refreshToken;
+  user.lastLogin = new Date();
+  await user.save();
+
+  // Set HTTP-Only Cookie
+  setRefreshTokenCookie(res, refreshToken);
+
+  const loggedUser = await UserModel.findById(user._id).select('-password -refreshToken -otp -otpExpiry');
 
   return res
     .status(201)
-    .json(new ApiResponse(201, createdUser, 'Registration successful. Please check your email for the verification code.'));
+    .json(new ApiResponse(201, { user: loggedUser, accessToken }, 'Registration successful. Welcome to ExpenseIQ!'));
 });
 
 const verifyOTP = asyncHandler(async (req, res) => {
@@ -124,14 +124,8 @@ const login = asyncHandler(async (req, res) => {
   }
 
   if (!user.isEmailVerified) {
-    // Generate new OTP and resend
-    const rawOtp = generateOTP();
-    user.otp = await hashOTP(rawOtp);
-    user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+    user.isEmailVerified = true;
     await user.save();
-
-    await sendVerificationEmail(user.email, user.name, rawOtp);
-    throw new ApiError(403, 'Email is not verified. A new verification OTP has been sent to your email.');
   }
 
   // Generate tokens
